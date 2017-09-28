@@ -2,6 +2,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TodoApp {
@@ -21,20 +23,10 @@ public class TodoApp {
                 " -c   Completes a task");
     }
 
-//    public void exe(String argument) {
-//        if (argument == "-l") {
-//            listTasks();
-//        } else {
-//            exe();
-//        }
-//    }
-
     public void listTasks() {
-
         Path myPath = Paths.get("tasks.txt");
         try {
             List<String> lines = Files.readAllLines(myPath);
-            System.out.println("\n");
             if (lines.isEmpty()) {
                 System.out.println("No todos for today! :)");
             }
@@ -44,8 +36,33 @@ public class TodoApp {
         } catch(IOException e) {
             System.out.println("Unable to read file.");
         }
-}
+    }
 
+    public void addTask(String newTask) {
+        Path myPath = Paths.get("tasks.txt");
+        try {
+            List<String> lines = Files.readAllLines(myPath);
+            lines.add(newTask);
+            Files.write(myPath, lines);
+        } catch(IOException e) {
+            System.out.println("Unable to read file.");
+        }
+    }
+
+    public void removeTask(int index) {
+        Path myPath = Paths.get("tasks.txt");
+        try {
+            List<String> lines = Files.readAllLines(myPath);
+            if (lines.size() < 2) {
+                System.out.println("No can do. The file has less than 2 tasks.");
+            } else {
+                lines.remove(lines.get(index - 1));
+            }
+            Files.write(myPath, lines);
+        } catch(IOException e) {
+            System.out.println("Unable to read file.");
+        }
+    }
 
 
     public static void main(String[] args) {
@@ -53,8 +70,20 @@ public class TodoApp {
 
         if (args.length == 0) {
             app.exe();
-        } else if (args.length > 0 && args[0].equals("-l")) {
+        } else if (args[0].equals("-l")) {
             app.listTasks();
+        } else if (args[0].equals("-a")) {
+            if (args.length == 1) {
+                System.out.println("Unable to add: no task provided");
+            } else {
+                app.addTask(args[1]);
+            }
+        } else if (args[0].equals("-r")) {
+            if (args.length == 1) {
+                System.out.println("Unable to remove: no index provided");
+            } else {
+                app.removeTask(Integer.valueOf(args[1]));
+            }
         }
 
 
