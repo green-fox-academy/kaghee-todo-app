@@ -1,4 +1,3 @@
-Make a listX
-Attend a lessonX
-Feed the monkey
+Feed the monkeyX
 Water the garden
+Add another itemX

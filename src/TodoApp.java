@@ -2,8 +2,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TodoApp {
@@ -12,7 +10,7 @@ public class TodoApp {
 
     }
 
-    public void exe() {
+    public void manual() {
         System.out.println("\nCommand Line Todo application\n" +
                 "=============================\n" +
                 "\n" +
@@ -31,14 +29,14 @@ public class TodoApp {
                 System.out.println("No todos for today! :)");
             }
             for (int i = 0; i < lines.size(); i++) {
-                String thisLine = lines.get(i).substring(0, lines.get(i).length()-1);
+                String thisLine = lines.get(i).substring(0, lines.get(i).length() - 1);
                 if (lines.get(i).endsWith("X")) {
                     System.out.println((i + 1) + " - [X] " + thisLine);
                 } else {
                     System.out.println((i + 1) + " - [ ] " + lines.get(i));
                 }
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             System.out.println("Unable to read file.");
         }
     }
@@ -49,7 +47,7 @@ public class TodoApp {
             List<String> lines = Files.readAllLines(myPath);
             lines.add(newTask);
             Files.write(myPath, lines);
-        } catch(IOException e) {
+        } catch (IOException e) {
             System.out.println("Unable to read file.");
         }
     }
@@ -65,8 +63,6 @@ public class TodoApp {
                     lines.remove(lines.get(index - 1));
                 } catch (IndexOutOfBoundsException e) {
                     System.out.println("Unable to remove: you don't have that many tasks!");
-                } catch (NumberFormatException e) {                                     // this is not workiiiiing
-                    System.out.println("Unable to remove: index is not a number");
                 }
             }
             Files.write(myPath, lines);
@@ -90,12 +86,11 @@ public class TodoApp {
         }
     }
 
-
     public static void main(String[] args) {
         TodoApp app = new TodoApp();
-
+        
         if (args.length == 0) {
-            app.exe();
+            app.manual();
         } else if (args[0].equals("-l")) {
             app.listTasks();
         } else if (args[0].equals("-a")) {
@@ -106,15 +101,27 @@ public class TodoApp {
             }
         } else if (args[0].equals("-r")) {
             if (args.length == 1) {
-                System.out.println("Unable to remove: no index provided");
+                System.out.println("No can do: no index provided");
             } else {
-                app.removeTask(Integer.valueOf(args[1]));
+                try {
+                    app.removeTask(Integer.valueOf(args[1]));
+                } catch (NumberFormatException e) {
+                    System.out.println("Unable to remove: index is not a number");
+                }
             }
         } else if (args[0].equals("-c")) {
-            app.checkTask(Integer.valueOf(args[1]));
+            if (args.length == 1) {
+                System.out.println("No can do: no index provided");
+            } else {
+                try {
+                    app.checkTask(Integer.valueOf(args[1]));
+                } catch (NumberFormatException e) {
+                    System.out.println("Unable to check: index is not a number");
+                }
+            }
         } else {
             System.out.println("Unsupported argument");
-            app.exe();
+            app.manual();
         }
     }
 }
